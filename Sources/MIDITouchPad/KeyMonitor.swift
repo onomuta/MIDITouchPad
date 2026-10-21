@@ -28,19 +28,15 @@ final class KeyMonitor {
 
     func start() {
         stop()
-        NSLog("[MIDITouchPad] KeyMonitor.start() isTrusted=\(isTrusted)")
         // 他アプリ操作中に押されたキー
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            NSLog("[MIDITouchPad] global keyDown keyCode=\(event.keyCode) chars=\(event.characters ?? "?")")
             self?.handle(event)
         }
         // 自分のパネルが前面のときは global monitor に来ないので local でも拾う
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            NSLog("[MIDITouchPad] local keyDown keyCode=\(event.keyCode) chars=\(event.characters ?? "?")")
             self?.handle(event)
             return event
         }
-        NSLog("[MIDITouchPad] global monitor = \(String(describing: globalMonitor)), local monitor = \(String(describing: localMonitor))")
     }
 
     func stop() {
@@ -56,7 +52,6 @@ final class KeyMonitor {
         // ⌘ 併用はアプリ側のショートカットなので無視する
         guard !event.modifierFlags.contains(.command) else { return }
         guard let digit = Self.digitKeyCodes[event.keyCode] else { return }
-        NSLog("[MIDITouchPad] matched digit=\(digit)")
         onDigit(digit)
     }
 }

@@ -192,7 +192,6 @@ final class TouchEngine: ObservableObject {
         let v = on ? 127 : 0
         guard v != lastSentTouch else { return }
         lastSentTouch = v
-        NSLog("[MIDITouchPad] sendTouchLocked: cc=\(activeTouchCC) value=\(v)")
         midi.sendControlChange(channel: channel, cc: activeTouchCC, value: v)
     }
 
@@ -201,22 +200,18 @@ final class TouchEngine: ObservableObject {
     /// 数字キー押下。1〜9 はスロット 0〜8、0 はスロット 9。
     func selectSlot(fromDigit digit: Int) {
         let slot = digit == 0 ? 9 : digit - 1
-        NSLog("[MIDITouchPad] selectSlot digit=\(digit) newSlot=\(slot) currentSlot=\(touchSlot) touching=\(touching) lastSentTouch=\(lastSentTouch)")
         guard slot != touchSlot else {
-            NSLog("[MIDITouchPad] selectSlot: 同じスロットなので無視")
             return
         }
 
         touchLock.lock()
         // 切り替え前の CC を必ず 0 に戻す。押しっぱなしのまま置き去りにしない。
         let wasHeld = lastSentTouch == 127
-        NSLog("[MIDITouchPad] selectSlot: wasHeld=\(wasHeld) oldCC=\(activeTouchCC)")
         if wasHeld {
             midi.sendControlChange(channel: channel, cc: activeTouchCC, value: 0)
         }
         touchSlot = slot
         lastSentTouch = 0
-        NSLog("[MIDITouchPad] selectSlot: newCC=\(activeTouchCC)")
         // 指が触れたままの切り替えなら、新しい CC で押し直す
         if wasHeld {
             sendTouchLocked(true)

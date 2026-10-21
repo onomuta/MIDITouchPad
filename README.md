@@ -1,8 +1,16 @@
 # MIDITouchPad
 
+**日本語** | [English](README.en.md)
+
 Mac のトラックパッドに触れた位置を MIDI CC として送信するメニューバー常駐アプリ。
 
 <img src="docs/screenshot.png" alt="MIDITouchPad のメニューバーパネル" width="320">
+
+## ダウンロード
+
+[Releases](https://github.com/onomuta/MIDITouchPad/releases/latest) から最新の `MIDITouchPad-x.y.z.zip` を
+ダウンロードして展開し、`MIDITouchPad.app` を `/Applications` に移す。Developer ID で署名され、
+Apple の公証を受けているので、Gatekeeper の警告なしに開ける。macOS 13 以降が必要。
 
 ## 送信内容
 
@@ -67,8 +75,18 @@ tccutil reset ListenEvent local.miditouchpad
 open build/MIDITouchPad.app
 ```
 
+ここで作られるのは ad-hoc 署名のアプリで、自分の Mac で動かすだけなら十分。Developer ID で
+署名する（Hardened Runtime 付き）には、証明書名を渡す。
+
+```sh
+SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" ./build.sh
+```
+
 起動すると Dock には出ず、メニューバーに手のアイコンが出て即座に送信を開始する。
 アイコンをクリックすると現在の X/Y/タッチ状態と設定が見える。
+
+アプリのアイコンは `tools/make_icon.swift` で描いている。作り直すときは
+`swift tools/make_icon.swift .` を実行する。
 
 ## 仕組みと制約
 

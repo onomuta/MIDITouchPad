@@ -2,6 +2,8 @@
 
 Mac のトラックパッドに触れた位置を MIDI CC として送信するメニューバー常駐アプリ。
 
+<img src="docs/screenshot.png" alt="MIDITouchPad のメニューバーパネル" width="320">
+
 ## 送信内容
 
 | 対象 | 既定値 | 備考 |

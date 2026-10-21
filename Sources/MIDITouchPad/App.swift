@@ -88,10 +88,23 @@ struct ControlPanel: View {
                 set: { engine.setKeysEnabled($0) }
             ))
 
-            if engine.keysEnabled && !engine.keyMonitorTrusted {
-                Text("他アプリが前面のとき反応しない場合は、システム設定 → プライバシーとセキュリティ → 入力監視 で許可してください")
-                    .font(.caption2)
-                    .foregroundStyle(.orange)
+            if engine.keysEnabled {
+                if engine.keysGlobalActive {
+                    Text("他のアプリが前面でも有効です")
+                        .font(.caption2)
+                        .foregroundStyle(.green)
+                } else {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("現在はこのパネルが前面のときだけ有効です。他のアプリでも使うには「入力監視」で MIDITouchPad を許可してください（許可後に反応しなければ、アプリを再起動）。")
+                            .font(.caption2)
+                            .foregroundStyle(.orange)
+                        Button("入力監視の設定を開く") {
+                            NSWorkspace.shared.open(URL(string:
+                                "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent")!)
+                        }
+                        .font(.caption2)
+                    }
+                }
             }
 
             HStack {

@@ -23,7 +23,9 @@ final class TouchEngine: ObservableObject {
     /// 最後に押された数字キーで決まるスロット（1〜9 → 0〜8、0 → 9）
     @Published private(set) var touchSlot: Int = 0
     @Published private(set) var keysEnabled = false
-    var keyMonitorTrusted: Bool { keyMonitor?.isTrusted ?? false }
+    /// 他アプリが前面でもキーを拾えている（入力監視が許可され、タップが動いている）か
+    @Published private(set) var keysGlobalActive = false
+    var hasListenAccess: Bool { keyMonitor?.hasListenAccess ?? CGPreflightListenEventAccess() }
     @Published var invertY: Bool { didSet { save(invertY, "invertY") } }
     @Published var highResolution: Bool { didSet { save(highResolution, "highResolution") } }
     @Published var holdLastValue: Bool { didSet { save(holdLastValue, "holdLastValue") } }
@@ -31,6 +33,7 @@ final class TouchEngine: ObservableObject {
     private let midi = MIDIOutput()
     private var devices: [MTDeviceRef] = []
     private var keyMonitor: KeyMonitor?
+    private var keyRetryTimer: Timer?
 
     /// いま実際に送信しているタッチ CC
     var activeTouchCC: Int { min(ccTouch + touchSlot, 127) }
@@ -220,21 +223,38 @@ final class TouchEngine: ObservableObject {
     }
 
     /// 数字キー監視の有効・無効。
-    /// グローバル監視の実際の必要権限は「入力監視」で、AXIsProcessTrusted（アクセシビリティ）は
-    /// 無関係なことがある。両方とも無音で失敗する権限なので、判定結果でブロックせず
-    /// 常に start() を試み、参考情報としてのみ状態を出す。
+    /// 入力監視が未許可でも start() は自分のパネル前面時のみ動くフォールバックで続行する。
     func setKeysEnabled(_ enabled: Bool) {
+        keyRetryTimer?.invalidate()
+        keyRetryTimer = nil
         if enabled {
             let monitor = keyMonitor ?? KeyMonitor { [weak self] digit in
                 self?.selectSlot(fromDigit: digit)
             }
             keyMonitor = monitor
             monitor.requestPermission()
-            monitor.start()
+            keysGlobalActive = monitor.start()
             keysEnabled = true
+            if !keysGlobalActive { scheduleKeyRetry() }
         } else {
             keyMonitor?.stop()
             keysEnabled = false
+            keysGlobalActive = false
+        }
+    }
+
+    /// 許可を後から与えたときに、トグルを入れ直さなくても全域監視へ切り替わるようにする。
+    private func scheduleKeyRetry() {
+        keyRetryTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] timer in
+            guard let self, let monitor = self.keyMonitor, self.keysEnabled else {
+                timer.invalidate()
+                return
+            }
+            if monitor.hasListenAccess, monitor.start() {
+                self.keysGlobalActive = true
+                timer.invalidate()
+                self.keyRetryTimer = nil
+            }
         }
     }
 }

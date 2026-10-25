@@ -34,7 +34,7 @@ struct ControlPanel: View {
             HStack {
                 Text("MIDITouchPad").font(.headline)
                 Spacer()
-                Button(engine.running ? "停止" : "開始") { engine.toggle() }
+                Button(engine.running ? LocalizedStringKey("Stop") : LocalizedStringKey("Start")) { engine.toggle() }
                     .keyboardShortcut(.defaultAction)
             }
 
@@ -55,25 +55,25 @@ struct ControlPanel: View {
 
             Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 6) {
                 GridRow {
-                    Text("チャンネル")
+                    Text("Channel")
                     Stepper(value: $engine.channel, in: 1...16) {
                         Text("\(engine.channel)").monospacedDigit()
                     }
                 }
                 GridRow {
-                    Text("X の CC")
+                    Text("X CC")
                     Stepper(value: $engine.ccX, in: 0...127) {
                         Text("\(engine.ccX)").monospacedDigit()
                     }
                 }
                 GridRow {
-                    Text("Y の CC")
+                    Text("Y CC")
                     Stepper(value: $engine.ccY, in: 0...127) {
                         Text("\(engine.ccY)").monospacedDigit()
                     }
                 }
                 GridRow {
-                    Text("タッチの基準 CC")
+                    Text("Touch base CC")
                     Stepper(value: $engine.ccTouch, in: 0...127) {
                         Text("\(engine.ccTouch)").monospacedDigit()
                     }
@@ -83,22 +83,23 @@ struct ControlPanel: View {
 
             Divider()
 
-            Toggle("数字キーでタッチ CC を切り替え", isOn: Binding(
+            Toggle("Switch touch CC with number keys", isOn: Binding(
                 get: { engine.keysEnabled },
                 set: { engine.setKeysEnabled($0) }
             ))
 
             if engine.keysEnabled {
                 if engine.keysGlobalActive {
-                    Text("他のアプリが前面でも有効です")
+                    Text("Active even when other apps are in front")
                         .font(.caption2)
                         .foregroundStyle(.green)
                 } else {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("現在はこのパネルが前面のときだけ有効です。他のアプリでも使うには「入力監視」で MIDITouchPad を許可してください（許可後に反応しなければ、アプリを再起動）。")
+                        Text("Currently active only while this panel is in front. To use it with other apps, allow MIDITouchPad in Input Monitoring (restart the app if it does not respond after allowing).")
                             .font(.caption2)
                             .foregroundStyle(.orange)
-                        Button("入力監視の設定を開く") {
+                            .fixedSize(horizontal: false, vertical: true)
+                        Button("Open Input Monitoring settings") {
                             NSWorkspace.shared.open(URL(string:
                                 "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent")!)
                         }
@@ -108,7 +109,7 @@ struct ControlPanel: View {
             }
 
             HStack {
-                Text("送信中のタッチ CC")
+                Text("Touch CC being sent")
                 Spacer()
                 Text("CC \(engine.activeTouchCC)")
                     .monospacedDigit()
@@ -117,21 +118,22 @@ struct ControlPanel: View {
             }
             .font(.caption)
 
-            Text("1〜9 で 基準 CC + 0〜8、0 で 基準 CC + 9 を選択")
+            Text("Keys 1–9 select base CC + 0–8; key 0 selects base CC + 9")
                 .font(.caption2)
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
 
-            Toggle("Y を上下反転", isOn: $engine.invertY)
-            Toggle("14bit 解像度 (LSB = CC+32)", isOn: $engine.highResolution)
-            Toggle("離しても最後の値を保持", isOn: $engine.holdLastValue)
+            Toggle("Invert Y", isOn: $engine.invertY)
+            Toggle("14-bit resolution (LSB = CC+32)", isOn: $engine.highResolution)
+            Toggle("Hold last value after release", isOn: $engine.holdLastValue)
 
             Divider()
 
-            Text("出力先: 仮想ポート「\(engine.portName)」")
+            Text("Output: virtual port “\(engine.portName)”")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            Button("終了") { NSApplication.shared.terminate(nil) }
+            Button("Quit") { NSApplication.shared.terminate(nil) }
         }
         .toggleStyle(.checkbox)
         .font(.caption)

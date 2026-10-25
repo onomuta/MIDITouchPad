@@ -4,9 +4,9 @@
 
 A menu bar app that sends where you touch your Mac's trackpad as MIDI CC messages.
 
-<img src="docs/screenshot.png" alt="MIDITouchPad menu bar panel" width="320">
+<img src="docs/screenshot.en.png" alt="MIDITouchPad menu bar panel" width="320">
 
-The app's interface is in Japanese. The labels quoted below are translated in parentheses.
+The interface is available in English and Japanese and follows your system language.
 
 ## Download
 
@@ -30,7 +30,7 @@ setup is needed; it simply appears in your DAW's list of MIDI inputs.
 
 ## Switching the touch CC with number keys
 
-Turn on the toggle "数字キーでタッチ CC を切り替え" (Switch touch CC with number keys) in the menu. The CC
+Turn on the toggle "Switch touch CC with number keys" in the menu. The CC
 number used for the touch on/off message then follows the **last number key you pressed**, even while
 another app such as your DAW is in front.
 
@@ -46,7 +46,7 @@ another app such as your DAW is in front.
 - The CC is the base CC (default 64) plus 0–8 for `1`–`9`, or plus 9 for `0`. Values above 127 are clamped to 127.
 - Keypad digits work the same way. Keys pressed together with `⌘` are ignored.
 - If you switch while a finger is on the trackpad, the app sends 0 on the old CC and 127 on the new one, so no CC is left stuck on.
-- The menu shows the CC currently in use under "送信中のタッチ CC" (Touch CC being sent).
+- The menu shows the CC currently in use under "Touch CC being sent".
 - The toggle is off by default, and the selection returns to the base CC every time the app starts.
 - Every digit you type in any app changes the selection, so turn the toggle off while typing text or numbers.
 
@@ -56,7 +56,7 @@ To catch keys while another app is in front, MIDITouchPad needs permission under
 Privacy & Security → **Input Monitoring**. Without it, number keys only work while the menu panel is open.
 
 1. Turn the toggle on. A permission dialog appears; choose to open System Settings and switch MIDITouchPad on.
-2. When the panel shows the green message "他のアプリが前面でも有効です" (Active even when other apps are in front), it is working. If it does not change after granting permission, quit and reopen the app.
+2. When the panel shows the green message "Active even when other apps are in front", it is working. If it does not change after granting permission, quit and reopen the app.
 3. If MIDITouchPad is not in the list, add `MIDITouchPad.app` with the "+" button under the list.
 
 ### Permission granted but the panel is not green

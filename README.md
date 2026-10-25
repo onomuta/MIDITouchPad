@@ -6,6 +6,8 @@ Mac のトラックパッドに触れた位置を MIDI CC として送信する�
 
 <img src="docs/screenshot.png" alt="MIDITouchPad のメニューバーパネル" width="320">
 
+画面は日本語と英語に対応していて、システムの言語に合わせて切り替わる。
+
 ## ダウンロード
 
 [Releases](https://github.com/onomuta/MIDITouchPad/releases/latest) から最新の `MIDITouchPad-x.y.z.zip` を

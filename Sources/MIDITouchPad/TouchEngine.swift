@@ -12,7 +12,7 @@ final class TouchEngine: ObservableObject {
     @Published private(set) var y: Double = 0.5
     @Published private(set) var touching = false
     @Published private(set) var running = false
-    @Published private(set) var statusMessage = "停止中"
+    @Published private(set) var statusMessage = String(localized: "Stopped")
 
     // 設定（UserDefaults に永続化）
     @Published var channel: Int { didSet { save(channel, "channel") } }
@@ -71,17 +71,17 @@ final class TouchEngine: ObservableObject {
     func start() {
         guard !running else { return }
         guard MultitouchSupport.isAvailable else {
-            statusMessage = "MultitouchSupport を読み込めません"
+            statusMessage = String(localized: "Could not load MultitouchSupport")
             return
         }
         midi.open()
         guard midi.isOpen else {
-            statusMessage = "MIDI ポートを作成できません"
+            statusMessage = String(localized: "Could not create the MIDI port")
             return
         }
         devices = MultitouchSupport.deviceList()
         guard !devices.isEmpty else {
-            statusMessage = "トラックパッドが見つかりません"
+            statusMessage = String(localized: "No trackpad found")
             return
         }
         for device in devices {
@@ -89,7 +89,7 @@ final class TouchEngine: ObservableObject {
             MultitouchSupport.start(device)
         }
         running = true
-        statusMessage = "送信中（\(devices.count) デバイス）"
+        statusMessage = String(localized: "Sending (\(devices.count) device(s))")
     }
 
     func stop() {
@@ -104,7 +104,7 @@ final class TouchEngine: ObservableObject {
         midi.close()
         running = false
         touching = false
-        statusMessage = "停止中"
+        statusMessage = String(localized: "Stopped")
     }
 
     func toggle() { running ? stop() : start() }

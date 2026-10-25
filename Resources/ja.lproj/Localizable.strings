@@ -20,4 +20,5 @@
 "Could not load MultitouchSupport" = "MultitouchSupport を読み込めません";
 "Could not create the MIDI port" = "MIDI ポートを作成できません";
 "No trackpad found" = "トラックパッドが見つかりません";
-"Sending (%lld device(s))" = "送信中（%lld デバイス）";
+"Sending (1 device)" = "送信中（1 デバイス）";
+"Sending (%lld devices)" = "送信中（%lld デバイス）";

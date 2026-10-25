@@ -89,7 +89,9 @@ final class TouchEngine: ObservableObject {
             MultitouchSupport.start(device)
         }
         running = true
-        statusMessage = String(localized: "Sending (\(devices.count) device(s))")
+        statusMessage = devices.count == 1
+            ? String(localized: "Sending (1 device)")
+            : String(localized: "Sending (\(devices.count) devices)")
     }
 
     func stop() {
